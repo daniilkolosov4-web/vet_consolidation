@@ -12,12 +12,29 @@ class Clinic(models.Model):
         verbose_name = "Клиника"
         verbose_name_plural = "Клиники"
 
+
 class Pet(models.Model):
     name = models.CharField(max_length=100, verbose_name="Кличка")
     animal_type = models.CharField(max_length=50, verbose_name="Вид (собака, кошка и т.д.)")
     age = models.IntegerField(null=True, blank=True, verbose_name="Возраст")
     owner_name = models.CharField(max_length=200, verbose_name="Владелец")
     clinic = models.ForeignKey(Clinic, on_delete=models.CASCADE, related_name="pets", verbose_name="Клиника")
+    
+    # НОВЫЕ ПОЛЯ (добавлены правильно)
+    chip_number = models.CharField(
+        max_length=15, 
+        unique=True, 
+        null=True, 
+        blank=True, 
+        verbose_name="Номер чипа",
+        help_text="Уникальный 15-значный номер (ISO 11784/11785)"
+    )
+    photo = models.ImageField(
+        upload_to='pet_photos/', 
+        null=True, 
+        blank=True, 
+        verbose_name="Фото питомца"
+    )
 
     def __str__(self):
         return f"{self.name} ({self.animal_type})"
@@ -25,6 +42,7 @@ class Pet(models.Model):
     class Meta:
         verbose_name = "Животное"
         verbose_name_plural = "Животные"
+
 
 class Visit(models.Model):
     pet = models.ForeignKey(Pet, on_delete=models.CASCADE, related_name="visits", verbose_name="Животное")

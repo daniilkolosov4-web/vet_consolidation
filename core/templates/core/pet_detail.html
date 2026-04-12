@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            {% if pet.photo %}
+                <img src="{{ pet.photo.url }}" class="card-img-top" alt="{{ pet.name }}">
+            {% else %}
+                <div class="card-body bg-light text-center">📷 Нет фото</div>
+            {% endif %}
+            <div class="card-body">
+                <h4 class="card-title">{{ pet.name }}</h4>
+                <p><strong>Вид:</strong> {{ pet.animal_type }}</p>
+                <p><strong>Чип:</strong> {{ pet.chip_number|default:"не указан" }}</p>
+                <p><strong>Возраст:</strong> {{ pet.age|default:"не указан" }} лет</p>
+                <p><strong>Владелец:</strong> {{ pet.owner_name }}</p>
+                <p><strong>Зарегистрирован в клинике:</strong> {{ pet.clinic.name }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4>📋 История визитов</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Дата</th><th>Клиника</th><th>Диагноз</th><th>Назначения</th><th>Стоимость</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for visit in visits %}
+                        <tr>
+                            <td>{{ visit.date }}</td>
+                            <td>{{ visit.clinic.name }}</td>
+                            <td>{{ visit.diagnosis }}</td>
+                            <td>{{ visit.treatment|truncatewords:8 }}</td>
+                            <td>{{ visit.cost }} ₽</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5">Нет визитов</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{% url 'index' %}" class="btn btn-secondary">Назад к списку</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

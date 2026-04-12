@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>📤 Импорт питомцев</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="import_type" value="pets">
+                    <div class="mb-3">
+                        <label class="form-label">CSV файл с питомцами</label>
+                        <input type="file" name="csv_file" accept=".csv" class="form-control" required>
+                        <div class="form-text">
+                            Ожидаемые колонки: name, animal_type, age, owner_name, chip_number, clinic_name
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Импортировать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>📥 Импорт визитов</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="import_type" value="visits">
+                    <div class="mb-3">
+                        <label class="form-label">CSV файл с визитами</label>
+                        <input type="file" name="csv_file" accept=".csv" class="form-control" required>
+                        <div class="form-text">
+                            Ожидаемые колонки: chip_number, clinic_name, date (ГГГГ-ММ-ДД), diagnosis, treatment, cost
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Импортировать</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

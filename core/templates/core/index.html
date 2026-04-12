@@ -1,49 +1,74 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Ветеринарная консолидация</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-4">
-    <h1>Сводка визитов</h1>
-    <a href="{% url 'add_visit' %}" class="btn btn-primary mb-3">+ Добавить визит</a>
+{% extends 'base.html' %}
 
-    <!-- Форма фильтра -->
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-auto">
-            <select name="clinic" class="form-select">
-                <option value="">Все клиники</option>
-                {% for clinic in clinics %}
-                    <option value="{{ clinic.id }}" {% if request.GET.clinic == clinic.id|stringformat:"s" %}selected{% endif %}>
-                        {{ clinic.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-primary">Фильтр</button>
-        </div>
-    </form>
-
-    <table class="table table-bordered">
-        <thead>
-            <tr><th>Дата</th><th>Клиника</th><th>Животное</th><th>Диагноз</th><th>Стоимость</th></tr>
-        </thead>
-        <tbody>
-            {% for visit in visits %}
-            <tr>
-                <td>{{ visit.date }}</td>
-                <td>{{ visit.clinic.name }}</td>
-                <td>{{ visit.pet.name }} ({{ visit.pet.animal_type }})</td>
-                <td>{{ visit.diagnosis }}</td>
-                <td>{{ visit.cost }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5">Нет данных</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1>Сводка визитов</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{% url 'add_visit' %}" class="btn btn-primary">+ Добавить визит</a>
+    </div>
 </div>
-</body>
-</html>
+
+<!-- Поиск по чипу -->
+<div class="card mb-4">
+    <div class="card-body">
+        <h5 class="card-title">🔍 Поиск питомца по чипу</h5>
+        <form method="get" class="row g-3">
+            <div class="col-auto">
+                {{ search_form.chip_number }}
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-primary">Найти</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Фильтр по клинике -->
+<form method="get" class="row g-3 mb-4">
+    <div class="col-auto">
+        <select name="clinic" class="form-select">
+            <option value="">Все клиники</option>
+            {% for clinic in clinics %}
+                <option value="{{ clinic.id }}" {% if request.GET.clinic == clinic.id|stringformat:"s" %}selected{% endif %}>
+                    {{ clinic.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-secondary">Фильтр</button>
+    </div>
+</form>
+
+<!-- Таблица визитов -->
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Дата</th>
+            <th>Клиника</th>
+            <th>Питомец (вид)</th>
+            <th>Диагноз</th>
+            <th>Стоимость</th>
+            <th>Детали</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for visit in visits %}
+        <tr>
+            <td>{{ visit.date }}</td>
+            <td>{{ visit.clinic.name }}</td>
+            <td>{{ visit.pet.name }} ({{ visit.pet.animal_type }})</td>
+            <td>{{ visit.diagnosis }}</td>
+            <td>{{ visit.cost }} ₽</td>
+            <td><a href="{% url 'pet_detail' visit.pet.id %}" class="btn btn-sm btn-info">Карточка</a></td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">Нет данных</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
