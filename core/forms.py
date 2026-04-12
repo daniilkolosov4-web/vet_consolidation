@@ -8,3 +8,11 @@ class VisitForm(forms.ModelForm):
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+# Новая форма для поиска по чипу
+class ChipSearchForm(forms.Form):
+    chip_number = forms.CharField(
+        max_length=15, 
+        label='Номер чипа',
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите 15-значный номер чипа'})
+    )
