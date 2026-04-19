@@ -1,5 +1,5 @@
 {% extends 'core/base.html' %}
-{% block title %}Название страницы{% endblock %}
+{% block title %}Сводка визитов{% endblock %}
 {% block content %}
 <div class="row mb-4">
     <div class="col-md-6">
@@ -49,6 +49,8 @@
             <th>Дата</th>
             <th>Клиника</th>
             <th>Питомец (вид)</th>
+            <th>Чип</th>
+            <th>Ветеринар</th>
             <th>Диагноз</th>
             <th>Стоимость</th>
             <th>Детали</th>
@@ -57,16 +59,18 @@
     <tbody>
         {% for visit in visits %}
         <tr>
-            <td>{{ visit.date }}</td>
+            <td>{{ visit.date|date:"d.m.Y" }}</td>
             <td>{{ visit.clinic.name }}</td>
             <td>{{ visit.pet.name }} ({{ visit.pet.animal_type }})</td>
-            <td>{{ visit.diagnosis }}</td>
+            <td>{% if visit.pet.chip_number %}{{ visit.pet.chip_number }}{% else %}—{% endif %}</td>
+            <td>{% if visit.employee %}{{ visit.employee.full_name }}{% else %}—{% endif %}</td>
+            <td>{{ visit.diagnosis|truncatewords:8 }}</td>
             <td>{{ visit.cost }} ₽</td>
             <td><a href="{% url 'pet_detail' visit.pet.id %}" class="btn btn-sm btn-info">Карточка</a></td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="6" class="text-center">Нет данных</td>
+            <td colspan="8" class="text-center">Нет данных</td>
         </tr>
         {% endfor %}
     </tbody>
