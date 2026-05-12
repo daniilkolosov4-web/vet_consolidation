@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Сопоставление колонок{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Сопоставление колонок CSV с полями базы данных</h2>
+    <p>Выберите, какой колонке из файла соответствует каждое поле. Если поле не нужно, оставьте пустым.</p>
+    <form method="post">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Поле в системе</th>
+                    <th>Колонка в CSV (выберите из списка)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for field, label in fields %}
+                <tr>
+                    <td><strong>{{ label }}</strong></td>
+                    <td>
+                        <select name="field_{{ field }}" class="form-select">
+                            <option value="">-- не указано --</option>
+                            {% for header in headers %}
+                                <option value="{{ header }}">{{ header }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Продолжить импорт</button>
+        <a href="{% url 'import_data' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

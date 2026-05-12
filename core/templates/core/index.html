@@ -7,6 +7,7 @@
     </div>
     <div class="col-md-6 text-end">
         <a href="{% url 'add_visit' %}" class="btn btn-primary">+ Добавить визит</a>
+        <a href="{% url 'export_visits' %}" class="btn btn-success">⬇️ Экспорт CSV</a>
     </div>
 </div>
 
@@ -42,15 +43,18 @@
     </div>
 </form>
 
-<!-- Таблица визитов -->
+<!-- Таблица визитов (расширенная) -->
 <table class="table table-bordered table-striped">
     <thead class="table-dark">
         <tr>
             <th>Дата</th>
             <th>Клиника</th>
-            <th>Питомец (вид)</th>
+            <th>Питомец</th>
+            <th>Вид</th>
+            <th>Порода</th>
+            <th>Окрас</th>
+            <th>Владелец</th>
             <th>Чип</th>
-            <th>Ветеринар</th>
             <th>Диагноз</th>
             <th>Стоимость</th>
             <th>Детали</th>
@@ -61,16 +65,19 @@
         <tr>
             <td>{{ visit.date|date:"d.m.Y" }}</td>
             <td>{{ visit.clinic.name }}</td>
-            <td>{{ visit.pet.name }} ({{ visit.pet.animal_type }})</td>
+            <td>{{ visit.pet.name }}</td>
+            <td>{{ visit.pet.animal_type }}</td>
+            <td>{{ visit.pet.breed|default:"—" }}</td>
+            <td>{{ visit.pet.color|default:"—" }}</td>
+            <td>{{ visit.pet.owner.full_name|default:"—" }}</td>
             <td>{% if visit.pet.chip_number %}{{ visit.pet.chip_number }}{% else %}—{% endif %}</td>
-            <td>{% if visit.employee %}{{ visit.employee.full_name }}{% else %}—{% endif %}</td>
             <td>{{ visit.diagnosis|truncatewords:8 }}</td>
             <td>{{ visit.cost }} ₽</td>
             <td><a href="{% url 'pet_detail' visit.pet.id %}" class="btn btn-sm btn-info">Карточка</a></td>
         </tr>
         {% empty %}
         <tr>
-            <td colspan="8" class="text-center">Нет данных</td>
+            <td colspan="11" class="text-center">Нет данных</td>
         </tr>
         {% endfor %}
     </tbody>

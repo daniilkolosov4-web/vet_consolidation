@@ -25,7 +25,7 @@ class PetAdmin(admin.ModelAdmin):
         'id', 'name', 'animal_type', 'breed', 'color', 
         'owner', 'clinic', 'chip_number', 'age'
     )
-    search_fields = ('chip_number', 'name', 'owner__full_name', 'breed')
+    search_fields = ('chip_number', 'name', 'owner__full_name', 'breed', 'color')
     list_filter = ('animal_type', 'clinic', 'breed')
     raw_id_fields = ('owner', 'clinic')  # удобно при большом количестве записей
     autocomplete_fields = ('owner', 'clinic')

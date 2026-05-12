@@ -58,12 +58,14 @@
                     <span>Добавить визит</span></a>
             </li>
 
-            <!-- Nav Item - Импорт данных -->
+            <!-- Nav Item - Импорт данных (только для менеджеров) -->
+            {% if user.is_authenticated and user.groups.all.0.name == 'Manager' %}
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'import_data' %}">
                     <i class="fas fa-fw fa-upload"></i>
                     <span>Импорт CSV</span></a>
             </li>
+            {% endif %}
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -105,7 +107,8 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <!-- Topbar Search (можно оставить или убрать) -->
+                    <!-- Topbar Search (поиск по чипу) – показываем, если пользователь авторизован -->
+                    {% if user.is_authenticated %}
                     <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" placeholder="Поиск по чипу..." aria-label="Search" id="chipSearchTop">
@@ -116,6 +119,7 @@
                             </div>
                         </div>
                     </form>
+                    {% endif %}
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -126,21 +130,32 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Администратор</span>
+                                {% if user.is_authenticated %}
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ user.username }}</span>
+                                {% else %}
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Гость</span>
+                                {% endif %}
                                 <img class="img-profile rounded-circle" src="{% static 'core/img/undraw_profile.svg' %}">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="/admin/">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Админка
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Выход
-                                </a>
+                                {% if user.is_authenticated %}
+                                    <a class="dropdown-item" href="/admin/">
+                                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Админка
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Выход
+                                    </a>
+                                {% else %}
+                                    <a class="dropdown-item" href="{% url 'login' %}">
+                                        <i class="fas fa-sign-in-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Вход
+                                    </a>
+                                {% endif %}
                             </div>
                         </li>
 
@@ -209,7 +224,7 @@
                 <div class="modal-body">Вы уверены, что хотите завершить сеанс?</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Отмена</button>
-                    <a class="btn btn-primary" href="{% url 'index' %}">Выйти (перенаправление)</a>
+                    <a class="btn btn-primary" href="{% url 'logout' %}">Выйти</a>
                 </div>
             </div>
         </div>
@@ -230,17 +245,21 @@
 
     <script>
         // Простой скрипт для поиска по чипу из верхней панели
-        document.getElementById('topSearchBtn')?.addEventListener('click', function() {
-            let chip = document.getElementById('chipSearchTop').value.trim();
-            if (chip) {
-                window.location.href = "{% url 'index' %}?chip_number=" + encodeURIComponent(chip);
-            }
-        });
-        document.getElementById('chipSearchTop')?.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('topSearchBtn').click();
-            }
-        });
+        const topSearchBtn = document.getElementById('topSearchBtn');
+        const chipSearchTop = document.getElementById('chipSearchTop');
+        if (topSearchBtn && chipSearchTop) {
+            topSearchBtn.addEventListener('click', function() {
+                let chip = chipSearchTop.value.trim();
+                if (chip) {
+                    window.location.href = "{% url 'index' %}?chip_number=" + encodeURIComponent(chip);
+                }
+            });
+            chipSearchTop.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    topSearchBtn.click();
+                }
+            });
+        }
     </script>
 </body>
 
