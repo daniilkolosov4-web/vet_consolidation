@@ -13,7 +13,7 @@
                 <h4 class="card-title">{{ pet.name }}</h4>
                 <p><strong>Вид:</strong> {{ pet.animal_type }}</p>
                 <p><strong>Чип:</strong> {{ pet.chip_number|default:"не указан" }}</p>
-                <p><strong>Возраст:</strong> {{ pet.age|default:"не указан" }} лет</p>
+                <p><strong>Возраст:</strong> {{ pet.get_age|default:"не указан" }} лет</p>
                 <p><strong>Владелец:</strong> {{ pet.owner_name }}</p>
                 <p><strong>Зарегистрирован в клинике:</strong> {{ pet.clinic.name }}</p>
             </div>
